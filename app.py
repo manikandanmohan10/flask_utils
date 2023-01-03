@@ -10,14 +10,16 @@ from datetime import datetime
 from logging import getLogger
 
 app = Flask(__name__)
-app.secret_key = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+app.secret_key = 'secret'
 app.config['SITE_NAME'] = 'orange'
-# logger = create_logger(app)
+app.static_folder = 'static'
+app.config['SESSION_PERMANENT'] = True
+# app.session_interface = 'memory'
+
 
 @app.route('/home')
 def home():
-    return 'Hello world'
-# app.add_url_rule('/home', 'home', home)
+    return '<h1> HELLO GUYS </h1>'
 
 
 @app.route('/secure_filename')
@@ -48,7 +50,7 @@ def flash_api():
 
 @app.route('/session')
 def session_api():
-    session['key'] = 'value'
+    session['name'] = "{'name':'MM'}"
     return 'Session data stored'
 
 
@@ -62,7 +64,7 @@ def get_session_api():
 def delete_session_api():
     session.clear()
     try:
-        value = session['key']
+        value = session['Name']
     except:
         value = 'Not found'
     
@@ -74,7 +76,7 @@ def abort_api():
     true = True
     if not true:
         return 'Hey'
-    return abort(401)
+    return abort(402)
 
 
 @app.route('/make_response')
@@ -86,7 +88,7 @@ def make_response_api():
     )
     response = make_response(response_data, 200)
     response.headers['Content-Type'] = 'application/json'
-    response.set_cookie('cookie_name', 'cookie_value')
+    response.set_cookie('name', 'ibrahim')
 
     return response
 
@@ -94,7 +96,7 @@ def make_response_api():
 @app.route('/get_cookie')
 def get_cookie_api():
     if 'cookie_name' in request.cookies:
-        return request.cookies['cookie_name']
+        return request.cookies.get('name', 'Not found')
     else:
         return 'Cookie does not exist'
    
@@ -102,7 +104,7 @@ def get_cookie_api():
 @app.route('/send_file')
 def send_file_api():
     file_path = "static/mr.jpg"
-    return send_file(file_path, mimetype='image/jpg', as_attachment=False)
+    return send_file(file_path, mimetype='image/jpg', as_attachment=True)
 
 
 @app.route('/url_encode')
@@ -154,7 +156,7 @@ def get_template_attribute_api():
 
 @app.route("/send_static_file")
 def send_static_file_api():
-    return app.send_static_file('mr.jpg')
+    return app.send_static_file('mr1.jpg')
 
 
 # @app.route("/url_value_preprocessor")
